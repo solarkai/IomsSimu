@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>视频图像信息应用服务管理</title>
+    <script src="js/jquery-1.11.2.min.js"></script>
+    <script src="js/jquery-ui-1.12.1/jquery-ui.js"></script>
+
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=OuPqBx7216pq0hvLed8G37bfUeuU2e2r">
+        //v2.0版本的引用方式：src="http://api.map.baidu.com/api?v=2.0&ak=您的密钥"
+    </script>
+    <script src="js/baidumap.js"></script>
+    <script src="js/mainContent.js"></script>
+
+    <link href="js/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet">
+    <link href="js/jquery-ui-1.12.1/jquery-ui.theme.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/mainContent.css" type="text/css"
+          media="screen">
+    <link rel="stylesheet" href="css/tablestyle.css" type="text/css"
+          media="screen">
+    <link rel='icon' href='images/onvif.ico' type='image/x-ico'/>
+    <style type="text/css">
+        html {
+            height: 100%
+        }
+
+        body {
+            height: 100%;
+            margin: 0px;
+            padding: 0px
+        }
+
+        .baidumap {
+            height: 75%
+        }
+    </style>
+</head>
+
+<body>
+<h2 class='pagetitle'>
+    <img src="/images/logo.png" width="189" height="35"
+         style="vertical-align: top; margin-bottom: -3px">
+    &nbsp;视频图像信息应用服务管理
+</h2>
+<div class="pagestatus">
+    <img id='exit' src="/images/turnon.png" width="30" height="35"
+         title="退出" class="roundedDivBorder"
+         style="filter: alpha(opacity =                     50); -moz-opacity: 0.5; -khtml-opacity: 0.5; opacity: 0.5; cursor: pointer; margin-right: 50px">
+</div>
+<div id="header" class="white wrapper">
+    <div id="navigation">
+        <ul>
+            <li><input class='button  bigrounded' id="return2map"
+                       type="button" value="返回地图" title="返回到地图主页面">
+            </li>
+            <li><input class='button bigrounded '
+                       id="serviceManagement" type="button" value="管理服务"
+                       title="增删改系统管理的视频图像信息服务">
+            </li>
+            <li><input class='button bigrounded '
+                       id="syncServer" type="button" value="同步数据到服务器"
+                       title="将软件平台与软件服务信息同步到服务器">
+            </li>
+
+        </ul>
+    </div>
+</div>
+<sidebar class="white roundedDivBorder" id="svrSideBar"
+         style="margin-top:5px;margin-right: 10px; margin-left: 10px; float: left; width: 22%;height:75%">
+    <!-- h3>地图控件</h3>
+    <ul>
+        <li id="addNavigationControl">addNavigationControl
+        </li>
+        <li id="setMapStyle">setMapStyle
+        </li>
+    </ul -->
+</sidebar>
+
+<div id="mapContent" class="baidumap white roundedDivBorder"
+     style="margin-top: 5px; margin-right: 10px; margin-left: 10px;">
+    地图加载中...
+</div>
+<iframe id="svrContent" class="baidumap white roundedDivBorder"
+        style="margin-top: 5px; margin-right: 10px; margin-left: 10px;float: right;width: 74.8%">
+    页面加载中...
+</iframe>
+<div id="magContent" class="baidumap white roundedDivBorder"
+     style="margin-top: 5px; margin-right: 10px; margin-left: 10px;float: right;width: 74.8%">
+    <div id="mgmTabs" style="height:98.5%">
+        <ul>
+            <li><a href="#tabs-1">软件平台管理</a></li>
+            <li><a href="#tabs-2">平台软件服务管理</a></li>
+        </ul>
+        <div id="tabs-1">
+            <fieldset align="left" style="padding:20px;margin-top:10px">
+                <legend>可选软件平台</legend>
+                <table>
+                    <tr>
+                        <td>软件平台列表：</td>
+                        <td>
+                            <select id="platSelect" style=" width:400px; padding:3px; margin:10px; height:30px">
+                                <!-- option value="volvo">Volvo</option -->
+                            </select></td>
+                        <td>
+                            <input name="btnPlatDel" type="button" value="删除所选平台">
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+            <fieldset align="left" style="padding:20px;margin-top:10px">
+                <legend>增加修改软件平台</legend>
+                <table id="mgmplat" title="" cellpadding="10" style="">
+                    <tr>
+                        <td align="left">软件平台名称<font color="red">*</font>：</td>
+                        <td align="left"><input name="platName" type="text" size="60"></td>
+                    </tr>
+                    <tr>
+                        <td align="left">软件平台位置<font color="red">*</font>：</td>
+                        <td align="left"><input type="text" name="platPos" size="60"></td>
+                    </tr>
+                    <tr>
+                        <td align="left">位置经度：</td>
+                        <td align="left"><input type="text" name="longitude"></td>
+                    </tr>
+                    <tr>
+                        <td align="left">位置纬度：</td>
+                        <td align="left"><input type="text" name="latitude"></td>
+                    </tr>
+                    <tr>
+                        <!-- td colspan="2" align="center" -->
+                        <td align="right">
+                            <input name="btnPlatClear" type="button" value="清空">
+                        </td>
+                        <td align="left">
+                            <input name="btnPlatSubmit" type="button" value="提交">
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </div>
+        <div id="tabs-2">
+            <fieldset align="left" style="padding:20px;margin-top:10px">
+                <legend>可选软件服务</legend>
+                <table title="" style="" cellpadding="10">
+                    <tr>
+                        <td align="left">
+                            软件平台列表：
+                            <select id="serviceplatSelect" style=" width:400px; padding:3px; margin:5px;height:30px">
+                                <!-- option value="volvo">Volvo</option -->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left">
+                            软件服务列表：
+                            <select id="serviceSelect" style=" width:400px; padding:3px; margin:5px;height:30px">
+                                <!-- option value="volvo">Volvo</option -->
+                            </select>
+                            <input name="btnServiceDel" type="button" value="删除所选服务">
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+            <fieldset align="left" style="padding:20px;margin-top:10px">
+                <legend>增加修改软件服务</legend>
+                <table title="" style="" cellpadding="10">
+                    <tr>
+                        <td align="left">软件服务名称<font color="red">*</font>：</td>
+                        <td align="left"><input name="serviceName" type="text" size="60"></td>
+                    </tr>
+                    <tr>
+                        <td align="left">服务URL<font color="red">*</font>：</td>
+                        <td align="left"><input type="text" name="serviceURL" size="80"></td>
+                    </tr>
+                    <tr>
+                        <td align="left">访问令牌<font color="red">*</font>：</td>
+                        <td align="left"><input type="text" name="accessToken" size="60"></td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <input name="btnServiceClear" type="button" value="清空">
+                        </td>
+                        <td align="left">
+                            <input name="btnServiceSubmit" type="button" value="提交">
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </div>
+    </div>
+</div>
+</body>
+</html>
