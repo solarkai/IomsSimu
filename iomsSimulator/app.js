@@ -1,35 +1,40 @@
 var express = require('express');
 var path = require("path");
 var qs = require('querystring');
-var proxy = require('http-proxy-middleware');
+var fs = require("fs");
 var authen = require("./authen");
-var sessionMgr = require("./sessionManager");
+var session = require("express-session");
 var dataMgr = require("./dataManager");
 
 var loginauthen = new authen(); //用户登录鉴权对象
-var sessionManager = new sessionMgr();
 var dataManager = new dataMgr();
 var app = express();
 var port = 80;
+
+var serverDir = path.dirname(__filename);
+var clientDir = path.join(serverDir, "pages/");
+var indexpath = path.join(clientDir, "/index.html");
 
 function logToConsole(message) {
     console.log("[" + new Date().toLocaleTimeString() + "] " + message);
 }
 
-function getHtmlPage(request, response) {
-    var serverDir = path.dirname(__filename)
-    var clientDir = path.join(serverDir, "pages/");
-    var url = request.url.split("?", 1)[0];
-    var filePath = path.join(clientDir, url);
-    if (filePath.indexOf(clientDir) != 0 || filePath == clientDir)
-        filePath = path.join(clientDir, "/login.html");
-    response.sendFile(filePath);
-}
+app.use(session({
+    secret: 'zhang kai',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {secure: false}
+}));
 
 //路由设置
-app.get('*', getHtmlPage);
+
+app.get('/mainContent.html', handleCheckSession);
+app.use(express.static(path.join(__dirname, 'pages')));
+
+app.use(logAjaxReqname);
 app.post('/login', handleLoginReq);
-app.post('/checkSession', handlecheckSessionReq);
+app.post('/logout',handleLogoutReq);
+app.post('/getLoginName', handlegetLoginName);
 app.post('/syncPlatInfo', handlesyncPlatInfoReq);
 app.post('/loadPlatInfo', handleloadPlatInfoReq);
 
@@ -39,9 +44,16 @@ app.listen(port, function () {
 });
 /*-------------------------------函数定义----------------------------*/
 
+//打印post方法名称
+function logAjaxReqname(request, response, next) {
+    if (request.method == 'POST') {
+        logToConsole("------coming AJAX url:" + request.url);
+    }
+    next();
+}
+
 /*处理 login请求*/
 function handleLoginReq(request, response) {
-    logToConsole("coming AJAX url:" + request.url);
     var res = response;
     var la = loginauthen;
     var cp = null;
@@ -52,7 +64,6 @@ function handleLoginReq(request, response) {
     request.on("end", function () {
         cp = qs.parse(commandBody);
         var result = false;
-        //res.writeHead(200, { "Content-Type": "text/plain" });
         if (('username' in cp) && ('password' in cp)) {
             la.username = cp.username;
             la.password = cp.password;
@@ -60,54 +71,61 @@ function handleLoginReq(request, response) {
         }
 
         if (result) {
-            var currdate = new Date();
-            var sessionid = currdate.toLocaleTimeString() + ":" + currdate.getMilliseconds();
-            res.writeHead(302, {
-                'Location': '/mainContent.html?' + sessionid
-                //add other headers here...
-            });
-            //登录成功将currdate.toLocaleTimeString()作为sessionId放入到session管理器中
-            if (!sessionManager.addSession(sessionid, {
-                    username: cp.username
-                })) {
-                logToConsole("sessionManager.addSession fail:" + sessionid);
-            }
+            request.session.signin = true;
+            request.session.username = cp.username;
+            res.redirect('/mainContent.html');
         } else {
-            res.writeHead(302, {
-                'Location': '/login.html?error'
-                //add other headers here...
-            });
+            res.redirect('/?error');
         }
-        res.end();
     });
+}
+
+/*处理 logout请求*/
+function handleLogoutReq(request, response) {
+    if(request.session.signin){
+        request.session.destroy();
+    }
+    response.redirect('/');
 }
 
 /*处理checkSession请求*/
-function handlecheckSessionReq(request,response) {
-    logToConsole("coming AJAX url:" + request.url);
-    var res = response;
-    var cp = null;
-    var commandBody = ""; //从POST 请求中获取，为字符串
-    request.on("data", function (data) {
-        commandBody += data;
-    });
-    request.on("end", function () {
-        var data;
-        cp = JSON.parse(commandBody);
-        res.writeHead(200, {"Content-Type": "application/json;charset=utf-8"});
-        if ((cp.sId) && (data = sessionManager.getSession(cp.sId))) {
-            res.write(JSON.stringify(data));
+function checkSession(request, response) {
+    if (request.session) {
+        if (request.session.signin) {
+            return true;
         } else {
-            res.write(JSON.stringify({}));  //发送一个空对象
-            logToConsole("sessionManager.getSession fail:" + cp.sId);
+            return false;
         }
-        res.end();
-    });
+    } else {
+        logToConsole("no session:" + request.url);
+        return true;
+    }
+}
+
+function handleCheckSession(request, response, next) {
+    if (checkSession(request, response)) {
+        logToConsole("succeed to check session:" + request.url);
+        next();
+    } else {
+        logToConsole("fail to check session:" + request.url);
+        response.redirect('/');
+    }
+}
+
+//处理getLoginName请求
+function handlegetLoginName(request, response, next) {
+    if (request.session.signin) {
+        var ret = {
+            username: request.session.username
+        }
+        response.send(JSON.stringify(ret));
+    } else {
+        reponse.end();
+    }
 }
 
 /*处理syncPlatInfo请求*/
-function handlesyncPlatInfoReq(request,response) {
-    logToConsole("coming AJAX url:" + request.url);
+function handlesyncPlatInfoReq(request, response) {
     var res = response;
     var cp = null;
     var commandBody = ""; //从POST 请求中获取，为字符串
@@ -125,8 +143,7 @@ function handlesyncPlatInfoReq(request,response) {
 }
 
 /*处理loadPlatInfo请求*/
-function handleloadPlatInfoReq(request,response) {
-    logToConsole("coming AJAX url:" + request.url);
+function handleloadPlatInfoReq(request, response) {
     var res = response;
     var commandBody = ""; //从POST 请求中获取，为字符串
     request.on("data", function (data) {
