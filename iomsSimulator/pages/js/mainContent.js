@@ -1,10 +1,4 @@
 //全局变量定义
-//var wsuri = 'ws://'+document.location.host+':80';
-var wsuri = '/stoc/browser/';
-var wsocket;
-var errorOccured = false;
-var sessionId; // 登录该页面的sessionId
-var sessionData; // 从服务器返回的sessionData
 var platList;  //存放软件平台的列表，对象属性为软件平台名称
 var serviceList; //存放软件服务的列表，对象属性为软件平台名称
 
@@ -25,7 +19,7 @@ function ajaxError(xhr, state) {
 function init() {
 
     // 初始有效性检验
-    checkSession(); // 从服务端校验
+    getLoginName(); // 从服务端获取登录用户名
 
     // 获取页面元素变量
     imgExit = document.getElementById("exit");
@@ -343,7 +337,28 @@ function serviceManagement() {
 
 /* 重定向到登录窗口 */
 function redirectLogin() {
-    window.location = '../';
+    /*window.location = '../';
+    $.ajax({
+        type: "POST",
+        url: "/logout",
+        contentType:"application/json;charset=utf-8",
+        data: JSON.stringify({
+            sId: sessionId
+        }),
+        //dataType: "json",
+        success: function(){},
+        error: ajaxError
+    });*/
+    //$.post("/logout");
+    var form = document.createElement("form");
+    form.action = "/logout";
+    form.method = "post";
+    // send post request
+    document.body.appendChild(form);
+    form.submit();
+
+    // remove form from document
+    document.body.removeChild(form);
 }
 
 /* 修改EXIT按钮的提示信息 */
@@ -360,28 +375,20 @@ function validPageFail() {
 }
 
 /* 检查此页面携带的sessionId是否合法 */
-function checkSession() {
+function getLoginName() {
 
-    var result = false;
-    var query = document.location.search;
-
-    // if (query) {
-    sessionId = query.substring(1); // 获取URL中问号之后的字符串
-    trace("get sessionId from url:" + sessionId);
     $.ajax({
         type: "POST",
-        url: "/checkSession",
+        url: "/getLoginName",
         contentType:"application/json;charset=utf-8",
-        data: JSON.stringify({
+        /*data: JSON.stringify({
             sId: sessionId
-        }),
+        }),*/
         dataType: "json",
-        success: checkSessionResult,
+        success: getLoginNameResult,
         error: ajaxError
     });
-    /*
-     * } else { validPageFail(); }
-     */
+
 }
 
 // 设置cookie
@@ -407,7 +414,7 @@ function checkCookie() {
 
     var user = getCookie("loginname");
     if (null != user) {
-        checkSessionResult({
+        getLoginNameResult({
             username: user
         });
     } else {
@@ -417,7 +424,7 @@ function checkCookie() {
 
 // ************************************************命令响应函数************************************
 /* checkSession操作的response处理 */
-function checkSessionResult(data, state) {
+function getLoginNameResult(data, state) {
     if ((data) && (data.username)) {
         updatePageStatus("登录用户:" + data.username + " ");
     } else {
