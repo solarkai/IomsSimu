@@ -34,42 +34,51 @@
         }
 
         .baidumap {
-            height: 75%
+            height: 88%;
+
+        }
+        .sidebar {
+            height: 88%;
+            width: 22%;
+        }
+        .navi {
+            height: 10%;
+
+        }
+        .naviele{
+            margin-top: 15px;
+
         }
     </style>
 </head>
 
-<body>
-<h2 class='pagetitle'>
-    <img src="/images/logo.png" width="189" height="35"
-         style="vertical-align: top; margin-bottom: -3px">
-    &nbsp;视频图像信息应用服务管理
-</h2>
-<div class="pagestatus">
-    <img id='exit' src="/images/turnon.png" width="30" height="35"
-         title="退出" class="roundedDivBorder"
-         style="filter: alpha(opacity =                     50); -moz-opacity: 0.5; -khtml-opacity: 0.5; opacity: 0.5; cursor: pointer; margin-right: 50px">
-</div>
-<div id="header" class="white wrapper">
-    <div id="navigation">
-        <ul>
-            <li><input class='button  bigrounded' id="return2map"
-                       type="button" value="返回地图" title="返回到地图主页面">
-            </li>
-            <li><input class='button bigrounded '
-                       id="serviceManagement" type="button" value="管理服务"
-                       title="增删改系统管理的视频图像信息服务">
-            </li>
-            <li><input class='button bigrounded '
-                       id="syncServer" type="button" value="同步数据到服务器"
-                       title="将软件平台与软件服务信息同步到服务器">
-            </li>
+<div id="header" class="white  wrapper navi">
+    <h2 class='pagetitle naviele' style="align-self: center">
+        <img src="/images/logo.png" width="189" height="35"
+             style="vertical-align: top; margin-bottom: -3px;">
+        &nbsp;运维软件服务管理
+    </h2>
 
-        </ul>
+    <input class='button  bigrounded naviele' id="return2map"
+           type="button" value="返回地图" title="返回到地图主页面" style="margin-left: 100px;">
+    <input class='button bigrounded naviele'
+           id="serviceManagement" type="button" value="管理服务"
+           title="增删改系统管理的视频图像信息服务">
+    <input class='button bigrounded naviele'
+           id="syncServer" type="button" value="同步数据到服务器"
+           title="将软件平台与软件服务信息同步到服务器">
+
+    <div class="pagestatus naviele">
+        <img id='exit' src="/images/turnon.png" width="30" height="35"
+             title="退出" class="roundedDivBorder"
+             style="filter: alpha(opacity =                     50); -moz-opacity: 0.5; -khtml-opacity: 0.5; opacity: 0.5; cursor: pointer; margin-right: 50px">
     </div>
 </div>
-<sidebar class="white roundedDivBorder" id="svrSideBar"
-         style="margin-top:5px;margin-right: 10px; margin-left: 10px; float: left; width: 22%;height:75%">
+
+
+
+<sidebar class="white roundedDivBorder sidebar" id="svrSideBar"
+         style="">
     <!-- h3>地图控件</h3>
     <ul>
         <li id="addNavigationControl">addNavigationControl
@@ -84,11 +93,11 @@
     地图加载中...
 </div>
 <iframe id="svrContent" class="baidumap white roundedDivBorder"
-        style="margin-top: 5px; margin-right: 10px; margin-left: 10px;float: right;width: 74.8%">
+        style="margin-top: 5px; margin-right: 10px; margin-left: 10px;float: right;width: 74.8%;">
     页面加载中...
 </iframe>
 <div id="magContent" class="baidumap white roundedDivBorder"
-     style="margin-top: 5px; margin-right: 10px; margin-left: 10px;float: right;width: 74.8%">
+     style="margin-top: 5px; margin-right: 10px; margin-left: 10px;float: right;width: 74.8%;">
     <div id="mgmTabs" style="height:98.5%">
         <ul>
             <li><a href="#tabs-1">软件平台管理</a></li>
