@@ -142,6 +142,12 @@ img {
 #header {
 	width: 100%;
 	background-color: #09F;
+	border-bottom-color: #1995e8; /*#bfbfbf;*/
+	border-bottom-style: solid;
+	border-bottom-width: 4px;
+	border-top-color: #1995e8; /*#bfbfbf;*/
+	border-top-style: solid;
+	border-top-width: 4px
 }
 
 #navigation {
@@ -163,12 +169,12 @@ img {
 	margin-right: 2.6595745%;
 }
 
-sidebar {
+.sidebar {
 	float: left;
-	width: 35%;
-	height: 620px;
-	border-style: groove;
-	border-width: thick;
+	margin-top:5px;
+	margin-right: 10px;
+	margin-left: 10px;
+	float: left;
 	overflow: scroll;
     font-family: "Microsoft YaHei", "黑体", "宋体", sans-serif,"Arial" ;
 
