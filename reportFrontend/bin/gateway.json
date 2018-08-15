@@ -1,0 +1,14 @@
+{
+  "gatewayList": [
+    {
+      "path": "/chart1",
+      "method": "get",
+      "proxy": {
+        "target": "http://127.0.0.1:8082",
+        "pathRewrite": {
+          "^/reports/chart1": "/loadChart1"
+        }
+      }
+    }
+  ]
+}
