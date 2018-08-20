@@ -1,6 +1,7 @@
 # IomsSimu
 # 一. 概述
   本项目模拟了平安城市运维管理软件软件架构中的部分组件。
+  
   平安城市运维管理软件软件架构详见[《平安城市运维管理软件架构》](http://blog.51cto.com/solarboy/2161795)一文的描述，软件架构如下图所示。
 ![](http://i2.51cto.com/images/blog/201808/20/2c9a020cd3127e3597f5a7ad2f412aef.jpg?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=)
 # 二. 部件描述
